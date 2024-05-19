@@ -38,9 +38,19 @@ sleepRouter.post("/", expressAsyncHandler( async (req, res) => {
 // 2. GET : Retrieves a list of all sleep records for a given user , sorted by date.
 sleepRouter.get("/:userId", expressAsyncHandler( async (req, res) => {
     const sleep = await Sleep.find({userId : req.params.userId});
-
+    
     if(sleep.length !== 0){
-        res.send(sleep);
+        // sorting of data 
+        const sortedSleep = sleep.sort(function(a,b){
+            let x = a.timestamp.toLowerCase();
+            let y = b.timestamp.toLowerCase();
+            
+            if(x>y){return 1;} 
+            if(x<y){return -1;}
+            return 0;
+        });
+        // sorting of data 
+        res.send(sortedSleep);
     }else{
         res.status(404).send({message : `Sleeps not found with this userId ${req.params.userId}`});
     }
