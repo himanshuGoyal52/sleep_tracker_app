@@ -9,7 +9,7 @@ const sleepRouter = express.Router();
 // 1. Post : Allows users to submit their sleep duration along with a timestamp.
 sleepRouter.post("/", expressAsyncHandler( async (req, res) => {
     if(!req.body.userId || !req.body.hours || !req.body.timestamp){
-        res.status(422).json({
+        res.status(400).json({
             message : 'Validation error',
         });
         return ;
@@ -27,7 +27,7 @@ sleepRouter.post("/", expressAsyncHandler( async (req, res) => {
             message : "Invalid sleeping data",
         });
     }else{
-        res.send({
+        res.status(201).send({
             message : `Sleeping data added for this userId ${createdSleep.userId}`,
             data : createdSleep,
         })
@@ -50,7 +50,7 @@ sleepRouter.get("/:userId", expressAsyncHandler( async (req, res) => {
             return 0;
         });
         // sorting of data 
-        res.send(sortedSleep);
+        res.status(200).send(sortedSleep);
     }else{
         res.status(404).send({message : `Sleeps not found with this userId ${req.params.userId}`});
     }
@@ -67,7 +67,7 @@ sleepRouter.delete("/:recordId", expressAsyncHandler( async (req, res) => {
     const deletedSleep = await Sleep.findByIdAndDelete( req.params.recordId );
 
     if(deletedSleep){
-        res.send({message : 'sleep deleted', sleep : deletedSleep});
+        res.status(200).send({message : 'sleep deleted', sleep : deletedSleep});
     } else{
         res.status(404).send({message : `Sleep not found of this recordId ${req.params.recordId}`});
     }
